@@ -1,0 +1,18 @@
+# Docker / volumes
+prestashop1/db_data/
+prestashop1/html/var/
+prestashop1/html/cache/
+
+# PrestaShop
+prestashop1/html/config/settings.inc.php
+prestashop1/html/install/
+
+
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
