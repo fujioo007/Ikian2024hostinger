@@ -5,9 +5,21 @@
 
 A very simple Docker-compose to discover Symfony 6 with PHP 8.0.13 in 5 minutes
 ## Run Locally
+
+Se connecter au git 
 ```bash
 git remote set-url origin git@github.com:fujioo007/Ikian2024hostinger.git
 ```
+
+Mettre à jour le git
+```bash
+git add .
+git commit -m "Description des changements"
+git push
+
+```
+
+
 Clone the project
 
 ```bash
