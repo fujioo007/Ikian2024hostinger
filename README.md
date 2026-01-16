@@ -11,13 +11,31 @@ Se connecter au git
 git remote set-url origin git@github.com:fujioo007/Ikian2024hostinger.git
 ```
 
-Mettre à jour le git
+Mettre à jour le git d'apres le dossier local
 ```bash
 git add .
 git commit -m "Description des changements"
 git push
 
 ```
+Générer le certificat auto-signé (DEV)
+
+```bash
+mkdir -p traefik/certs
+```
+Puis :
+```bash
+openssl req -x509 -nodes -days 365 \
+  -newkey rsa:2048 \
+  -keyout traefik/certs/dev.key \
+  -out traefik/certs/dev.crt \
+  -subj "/CN=dev.local"
+```
+Tu obtiens :
+
+dev.crt
+
+dev.key
 
 
 Clone the project
