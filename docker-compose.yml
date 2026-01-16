@@ -1,0 +1,86 @@
+version: "3.9"
+
+services:
+
+  traefik:
+    image: traefik:v3.0
+    container_name: traefik
+    restart: unless-stopped
+    command:
+      - "--configFile=/etc/traefik/traefik.yml"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
+      - ./traefik/certs:/etc/traefik/certs:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - web
+
+  db1:
+    image: mysql:8.0
+    container_name: prestashop1-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: prestashop1
+      MYSQL_USER: prestashop1
+      MYSQL_PASSWORD: prestashop1pass
+    volumes:
+      - ./prestashop1/db_data:/var/lib/mysql
+    networks:
+      - web
+
+  prestashop1:
+    build: ./prestashop1
+    container_name: prestashop1
+    restart: unless-stopped
+    environment:
+      DB_SERVER: db1
+      DB_USER: prestashop1
+      DB_PASSWORD: prestashop1pass
+      DB_NAME: prestashop1
+      PS_DEV_MODE: "1"
+      PS_INSTALL_AUTO: "1"
+      PS_ERASE_DB: "0"
+    volumes:
+      - ./prestashop1/html:/var/www/html   # montage local pour dev
+    expose:
+      - "8000"    # port interne pour Traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prestashop1.rule=Host(`shop1.dev.local`)"
+      - "traefik.http.routers.prestashop1.entrypoints=websecure"
+      - "traefik.http.routers.prestashop1.tls=true"
+      - "traefik.http.services.prestashop1.loadbalancer.server.port=8000"
+    depends_on:
+      - db1
+    networks:
+      - web
+
+  phpmyadmin1:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin1
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db1
+      PMA_PORT: 3306
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.phpmyadmin1.rule=Host(`pma1.dev.local`)"
+      - "traefik.http.routers.phpmyadmin1.entrypoints=websecure"
+      - "traefik.http.routers.phpmyadmin1.tls=true"
+      - "traefik.http.services.phpmyadmin1.loadbalancer.server.port=80"
+    depends_on:
+      - db1
+    networks:
+      - web
+
+volumes:
+  prestashop1_db_data:
+
+networks:
+  web:
+    external: true
