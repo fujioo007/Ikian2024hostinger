@@ -6,6 +6,20 @@
 A very simple Docker-compose to discover Symfony 6 with PHP 8.0.13 in 5 minutes
 ## Run Locally
 
+Lister les réseaux Docker existants
+```bash
+gdocker network ls
+```
+ou Tu peux filtrer pour le réseau web :
+```bash
+docker network ls | grep web
+```
+
+Créer le réseau si nécessaire
+```bash
+docker network create web
+```
+
 Se connecter au git 
 ```bash
 git remote set-url origin git@github.com:fujioo007/Ikian2024hostinger.git
