@@ -1,4 +1,6 @@
-tls:
-  certificates:
-    - certFile: /etc/traefik/certs/dev.crt
-      keyFile: /etc/traefik/certs/dev.key
+http:
+  middlewares:
+    redirect-to-https:
+      redirectScheme:
+        scheme: https
+        permanent: true

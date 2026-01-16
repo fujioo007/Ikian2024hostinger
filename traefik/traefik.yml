@@ -12,6 +12,7 @@ providers:
 
 api:
   dashboard: true
+
 tls:
   certificates:
     - certFile: /etc/traefik/certs/dev.crt

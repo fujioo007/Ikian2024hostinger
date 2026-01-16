@@ -15,6 +15,7 @@ services:
       - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
       - ./traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
       - ./traefik/certs:/etc/traefik/certs:ro
+      - ./traefik/acme.json:/acme.json
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - web
@@ -46,9 +47,10 @@ services:
       PS_INSTALL_AUTO: "1"
       PS_ERASE_DB: "0"
     volumes:
-      - ./prestashop1/html:/var/www/html   # montage local pour dev
+      - ./prestashop1/html:/var/www/html
+      - ./prestashop1/html/docker/custom.ini:/usr/local/etc/php/conf.d/custom.ini:ro
     expose:
-      - "8000"    # port interne pour Traefik
+      - "8000"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.prestashop1.rule=Host(`shop1.dev.local`)"

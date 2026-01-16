@@ -1,36 +1,19 @@
-# Utilise l'image officielle FrankenPHP + Apache
-FROM ghcr.io/dunglas/frankenphp:2.3-apache
+# FrankenPHP avec PHP 8.4
+FROM ghcr.io/fabianmichael/frankenphp:8.4
 
-# Définir le répertoire de travail
 WORKDIR /var/www/html
 
-# Copier le code PrestaShop (optionnel si tu montes un volume)
+# Copier les fichiers PrestaShop téléchargés
 COPY html/ /var/www/html/
 
-# Installer les extensions PHP nécessaires à PrestaShop
-RUN frankenphp-install \
-    pdo_mysql \
-    gd \
-    mbstring \
-    intl \
-    zip \
-    soap \
-    xml \
-    ctype \
-    bcmath \
-    json \
-    curl \
-    iconv
+# Installer les extensions PHP nécessaires pour PrestaShop 9
+RUN frankenphp-extension-install mysqli gd intl ctype curl mbstring soap xml zip json opcache pdo_mysql
 
 # Permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html
+RUN chown -R www-data:www-data /var/www/html
 
-# Exposer le port interne pour Traefik
+# Expose le port pour Traefik
 EXPOSE 8000
 
-# Active le mode DEV (optionnel)
-ENV PS_DEV_MODE=1
-
-# Commande par défaut (FrankenPHP gère Apache + PHP-FPM)
-CMD ["frankenphp", "run", "--host=0.0.0.0", "--port=8000"]
+# Lancer FrankenPHP
+CMD ["frankenphp", "-S", "0.0.0.0:8000", "-t", "/var/www/html"]
