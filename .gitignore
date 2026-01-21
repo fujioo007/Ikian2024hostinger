@@ -7,7 +7,7 @@ prestashop1/html/cache/
 prestashop1/html/config/settings.inc.php
 prestashop1/html/install/
 
-prestashop1/html/
+/prestashop1/html/
 
 # Logs
 *.log
