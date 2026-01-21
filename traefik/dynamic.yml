@@ -4,3 +4,12 @@ http:
       redirectScheme:
         scheme: https
         permanent: true
+
+  routers:
+    http-to-https:
+      rule: "HostRegexp(`{host:.+}`)"
+      entryPoints:
+        - web
+      middlewares:
+        - redirect-to-https
+      service: noop@internal

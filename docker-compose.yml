@@ -15,7 +15,6 @@ services:
       - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
       - ./traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
       - ./traefik/certs:/etc/traefik/certs:ro
-      - ./traefik/acme.json:/acme.json
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - web
@@ -79,9 +78,6 @@ services:
       - db1
     networks:
       - web
-
-volumes:
-  prestashop1_db_data:
 
 networks:
   web:
