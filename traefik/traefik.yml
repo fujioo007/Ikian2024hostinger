@@ -1,3 +1,9 @@
+log:
+  level: DEBUG
+
+api:
+  dashboard: true
+
 entryPoints:
   web:
     address: ":80"
@@ -7,13 +13,3 @@ entryPoints:
 providers:
   docker:
     exposedByDefault: false
-  file:
-    filename: /etc/traefik/dynamic.yml
-
-api:
-  dashboard: true
-
-tls:
-  certificates:
-    - certFile: /etc/traefik/certs/dev.crt
-      keyFile: /etc/traefik/certs/dev.key

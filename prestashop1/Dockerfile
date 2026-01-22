@@ -1,42 +1,36 @@
-# FrankenPHP avec PHP 8.2
-FROM ghcr.io/fabianmichael/frankenphp:8.2
+# PHP 8.2 FPM
+FROM php:8.2-fpm
 
-# Dossier de travail
+# Installer dépendances
+RUN apt-get update && apt-get install -y \
+    nginx supervisor mariadb-client \
+    zip unzip curl git \
+    libzip-dev \
+    libpng-dev libjpeg-dev libfreetype6-dev libonig-dev libxml2-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install \
+        pdo \
+        pdo_mysql \
+        mbstring \
+        exif \
+        pcntl \
+        bcmath \
+        gd \
+        xml \
+        zip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Créer dossier de travail et permissions
+RUN mkdir -p /var/www/html \
+    && chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html
+
+# Copier fichiers de configuration
+COPY nginx.conf /etc/nginx/sites-available/default
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
 WORKDIR /var/www/html
+EXPOSE 80
 
-# Variables PrestaShop (install auto)
-ENV PS_DEV_MODE=1 \
-    PS_INSTALL_AUTO=1 \
-    PS_ERASE_DB=0 \
-    PS_DOMAIN=shop1.dev.local \
-    PS_FOLDER_ADMIN=admin \
-    PS_FOLDER_INSTALL=install \
-    ADMIN_MAIL=admin@shop1.dev.local \
-    ADMIN_PASSWD=admin123
-
-# Copier les fichiers PrestaShop
-COPY html/ /var/www/html/
-
-# Extensions PHP requises par PrestaShop 9
-RUN frankenphp-extension-install \
-    mysqli \
-    pdo_mysql \
-    gd \
-    intl \
-    curl \
-    mbstring \
-    soap \
-    xml \
-    zip \
-    json \
-    opcache
-
-# Permissions nécessaires à PrestaShop
-RUN chown -R www-data:www-data /var/www/html \
- && chmod -R 755 /var/www/html
-
-# Port exposé pour Traefik
-EXPOSE 8000
-
-# Lancer FrankenPHP
-CMD ["frankenphp", "-S", "0.0.0.0:8000", "-t", "/var/www/html"]
+# Lancer supervisord
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf", "-n"]
